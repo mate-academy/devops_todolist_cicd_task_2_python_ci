@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: '3.8'
-      DJANGO_SETTINGS_MODULE: 'todolist.settings'
+      DJANGO_SETTINGS_MODULE: todolist.settings
     defaults:
       run:
         working-directory: ./src
@@ -29,9 +29,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install coverage flake8 pytest 
+          pip install coverage flake8 pytest
           pip install -r requirements.txt
-  
+     
       - name: Lint with flake8
         run: |
           flake8 . --show-source --statistics
@@ -42,11 +42,11 @@ jobs:
           cd ../
           flake8 . --exit-zero --max-complexity=10 --statistics
         continue-on-error: true
-
+      
       - name: Test with pytest
         run: |
-          pytest 
-
+            pytest 
+      
       - name: Run coverage tests
         run: |
           coverage run manage.py test
