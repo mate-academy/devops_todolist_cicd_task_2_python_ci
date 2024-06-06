@@ -45,7 +45,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          DJANGO_SETTINGS_MODULE=$ pytest 
+          pytest 
       
       - name: Run coverage tests
         run: |
