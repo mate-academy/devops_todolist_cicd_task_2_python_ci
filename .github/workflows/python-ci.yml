@@ -32,6 +32,12 @@ jobs:
           pip install coverage flake8 pytest
           pip install -r requirements.txt
 
+      - name: Test with pytest
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: |
+            pytest 
+  
       - name: Lint with flake8
         run: |
           flake8 . --show-source --statistics
@@ -43,9 +49,7 @@ jobs:
           flake8 . --exit-zero --max-complexity=10 --statistics
         continue-on-error: true
       
-      - name: Test with pytest
-        run: |
-          pytest 
+
       
       - name: Run coverage tests
         run: |
