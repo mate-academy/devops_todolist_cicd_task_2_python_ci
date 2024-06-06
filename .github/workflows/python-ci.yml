@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: '3.8'
-      DJANGO_SETTINGS_MODULE: src.todolist.settings
+      DJANGO_SETTINGS_MODULE: todolist.settings
     defaults:
       run:
         working-directory: ./src
