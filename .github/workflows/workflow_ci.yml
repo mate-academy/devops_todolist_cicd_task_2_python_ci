@@ -1,5 +1,5 @@
 name: python-deployment
-run-name: ${{ github.actor }} - ${{ github.ref_name }}
+run-name: ${{ github.actor }} - ${{ github.sha }}
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
     - uses: actions/setup-python@v5
       name: Setup Python ${{ env.PYTHON_VERSION }}
       with:
-        python-version: '${{ env.PYTHON_VERSION }}'
+        python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Install Dependencies
       run: |
@@ -45,7 +45,11 @@ jobs:
 
     - name: Run unit tests with pytest
       run: |
-        pytest . -v --cov=/lists --cov-report=term-missing --cov-report=json
+        pytest -v --cov=. --cov-report=term-missing --cov-report=html
+
+    - name: Show coverage report
+      run: |
+        coverage report
 
     - uses: actions/upload-artifact@v2
       name: Upload artifact
