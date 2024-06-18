@@ -45,7 +45,7 @@ jobs:
 
     - name: Run unit tests with pytest
       run: |
-        pytest -v --cov=. --cov-report=term-missing --cov-report=json
+        pytest -v --cov=. --cov-report=term-missing --cov-report=html
 
     - name: Show coverage report
       run: |
