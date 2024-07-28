@@ -34,11 +34,11 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest
+          pytest accounts/tests api/tests lists/tests  # Specify the test directories
 
       - name: Generate coverage
         run: |
-          coverage run -m pytest
+          coverage run -m pytest accounts/tests api/tests lists/tests  # Specify the test directories
           coverage report
 
       - name: Check code style
