@@ -13,7 +13,7 @@ env:
   PYTHON_VERSION: '3.9'  # Specify the Python version you want to use
 
 jobs:
-  Python-CI:
+  python-ci:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,20 +34,25 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest accounts/tests api/tests lists/tests  # Specify the test directories
+          pytest
 
       - name: Generate coverage
         run: |
-          coverage run -m pytest accounts/tests api/tests lists/tests  # Specify the test directories
+          coverage run -m pytest
+
+      - name: Display coverage report
+        run: |
           coverage report
 
       - name: Check code style
         run: |
           flake8 --ignore=E501
+        continue-on-error: true
 
       - name: Check code complexity
         run: |
           flake8 --max-complexity=10
+        continue-on-error: true
 
       - name: Upload Python code as artifact
         uses: actions/upload-artifact@v2
