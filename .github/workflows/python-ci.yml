@@ -9,6 +9,9 @@ on:
     branches:
       - main
 
+env:
+  PYTHON_VERSION: '3.9'  # Specify the Python version you want to use
+
 jobs:
   Python-CI:
     runs-on: ubuntu-latest
