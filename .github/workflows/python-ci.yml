@@ -11,6 +11,7 @@ on:
 
 env:
   PYTHON_VERSION: '3.9'  # Specify the Python version you want to use
+  DJANGO_SETTINGS_MODULE: 'your_project.settings'  # Replace 'your_project.settings' with the actual path to your settings module
 
 jobs:
   Python-CI:
@@ -39,18 +40,13 @@ jobs:
       - name: Generate coverage
         run: |
           coverage run -m unittest discover
-
-      - name: Display coverage report
-        run: |
           coverage report
 
       - name: Check code style
-        continue-on-error: true
         run: |
           flake8 --ignore=E501
 
       - name: Check code complexity
-        continue-on-error: true
         run: |
           flake8 --max-complexity=10
 
