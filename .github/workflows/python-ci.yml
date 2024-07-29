@@ -34,7 +34,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lint
-        run: cd ../ && flake8 . --show-sources --statistics
+        run: cd ../ && flake8 . --show-source --statistics
 
       - name: Check Complexity
         run: |
