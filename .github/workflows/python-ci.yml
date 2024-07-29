@@ -32,3 +32,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest
           pip install -r requirements.txt
+
+      - name: Lint
+        run: cd ../ && flake8 . --show-sources --statistics
+
+      - name: Check Complexity
+        run: |
+          cd ../
+          flake8 . --statistics --count --max-complexity=10 --exit-zero
