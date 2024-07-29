@@ -1,7 +1,6 @@
 name: Python CI
 run-name: triggered by ${{ github.actor }} for ${{ github.sha }}
 
-
 on:
   push:
     branches:
@@ -29,16 +28,38 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest
+          pip install flake8 pytest autopep8 isort black
           pip install -r requirements.txt
+
+      - name: Run autopep8
+        run: |
+          autopep8 --in-place --aggressive --aggressive ./lists/views.py
+          autopep8 --in-place --aggressive --aggressive ./todolist/settings.py
+          autopep8 --in-place --aggressive --aggressive ./todolist/wsgi.py
+
+      - name: Sort imports with isort
+        run: |
+          isort ./lists/views.py
+          isort ./todolist/settings.py
+          isort ./todolist/wsgi.py
+
+      - name: Format code with Black
+        run: |
+          black ./lists/views.py
+          black ./todolist/settings.py
+          black ./todolist/wsgi.py
 
       - name: Lint
         run: |
           flake8 . --show-source --statistics
-
-      - name: Code complexity
-        run: |
-          flake8. . --count --select=C,E,F,W --show-source --statistics
