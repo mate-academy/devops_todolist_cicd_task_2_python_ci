@@ -61,10 +61,14 @@ jobs:
         continue-on-error: true
 
       - name: Run tests
-        run: pytest --ds=${{ env.DJANGO_SETTINGS_MODULE }}
+        env:
+          DJANGO_SETTINGS_MODULE: ${{ env.DJANGO_SETTINGS_MODULE }}
+        run: pytest
 
       - name: Generate coverage report
-        run: coverage run -m pytest --ds=${{ env.DJANGO_SETTINGS_MODULE }}
+        env:
+          DJANGO_SETTINGS_MODULE: ${{ env.DJANGO_SETTINGS_MODULE }}
+        run: coverage run -m pytest
 
       - name: Display coverage report
         run: coverage report
