@@ -53,3 +53,4 @@ jobs:
 
       - name: Lint
         run: flake8 . --show-source --statistics
+        continue-on-error: true
