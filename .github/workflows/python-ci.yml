@@ -12,6 +12,7 @@ on:
 
 env:
   PYTHON_VERSION: '3.8'
+  DJANGO_SETTINGS_MODULE: 'todolist.settings'
 
 jobs:
   Python-CI:
@@ -60,10 +61,10 @@ jobs:
         continue-on-error: true
 
       - name: Run tests
-        run: pytest
+        run: pytest --ds=${{ env.DJANGO_SETTINGS_MODULE }}
 
       - name: Generate coverage report
-        run: coverage run -m pytest
+        run: coverage run -m pytest --ds=${{ env.DJANGO_SETTINGS_MODULE }}
 
       - name: Display coverage report
         run: coverage report
