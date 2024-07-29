@@ -43,23 +43,13 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run autopep8
-        run: |
-          autopep8 --in-place --aggressive --aggressive ./lists/views.py
-          autopep8 --in-place --aggressive --aggressive ./todolist/settings.py
-          autopep8 --in-place --aggressive --aggressive ./todolist/wsgi.py
+        run: autopep8 --in-place --aggressive --aggressive --recursive .
 
       - name: Sort imports with isort
-        run: |
-          isort ./lists/views.py
-          isort ./todolist/settings.py
-          isort ./todolist/wsgi.py
+        run: isort .
 
       - name: Format code with Black
-        run: |
-          black ./lists/views.py
-          black ./todolist/settings.py
-          black ./todolist/wsgi.py
+        run: black .
 
       - name: Lint
-        run: |
-          flake8 . --show-source --statistics
+        run: flake8 . --show-source --statistics
