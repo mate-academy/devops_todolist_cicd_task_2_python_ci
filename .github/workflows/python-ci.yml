@@ -1,4 +1,6 @@
 name: Python CI
+run-name: triggered by ${{ github.actor }} for ${{ github.sha }}
+
 
 on:
   push:
@@ -37,3 +39,6 @@ jobs:
         run: |
           flake8 . --show-source --statistics
 
+      - name: Code complexity
+        run: |
+          flake8. . --count --select=C,E,F,W --show-source --statistics
