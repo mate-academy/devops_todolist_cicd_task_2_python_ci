@@ -35,29 +35,12 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest autopep8 isort black coverage
           pip install -r requirements.txt
-
-      - name: Run autopep8
-        run: autopep8 --in-place --aggressive --aggressive --recursive .
-
-      - name: Sort imports with isort
-        run: isort .
-
-      - name: Format code with Black
-        run: black .
-
-      - name: Lint
-        run: сflake8 . --show-source --statistics
-        continue-on-error: true
-
-      - name: Check code complexity
-        run: flake8 --statistics --max-complexity 10 --exit-zero
-        continue-on-error: true
 
       - name: Run tests
         run: pytest
@@ -67,6 +50,14 @@ jobs:
 
       - name: Display coverage report
         run: coverage report
+
+      - name: Check code style
+        run: flake8 .
+        continue-on-error: true
+
+      - name: Check code complexity
+        run: flake8 --statistics --max-complexity 10 --exit-zero
+        continue-on-error: true
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
