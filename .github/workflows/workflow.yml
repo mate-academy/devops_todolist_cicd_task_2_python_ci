@@ -1,0 +1,56 @@
+name: python-deployment
+run-name: ${{ github.actor }} - ${{ github.ref_name }} - ${{ github.sha }}
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  PYTHON_VERSION: '3.9'
+
+jobs:
+  python_ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./src
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install coverage flake8
+
+    - name: Run tests
+      run: python -m unittest discover tests
+
+    - name: Generate coverage report
+      run: coverage run -m unittest discover tests
+
+    - name: Display coverage report
+      run: coverage report
+    
+    - name: Check code style
+      continue-on-error: true
+      run: flake8 . --show-source --statistics
+    
+    - name: Check code complexity
+      continue-on-error: true
+      run: flake8 . --statistics --max-complexity=10 --exit-zero
+
+    - name: Upload Python code as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: python-code
+        path: ./src
