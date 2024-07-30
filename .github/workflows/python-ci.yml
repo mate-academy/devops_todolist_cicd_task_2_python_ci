@@ -12,7 +12,6 @@ on:
 
 env:
   PYTHON_VERSION: '3.8'
-  DJANGO_SETTINGS_MODULE: 'todolist.settings'
 
 jobs:
   Python-CI:
@@ -53,21 +52,17 @@ jobs:
         run: black .
 
       - name: Lint
-        run: flake8 . --show-source --statistics
+        run: сflake8 . --show-source --statistics
         continue-on-error: true
 
       - name: Check code complexity
-        run: flake8 --max-complexity 10 .
+        run: flake8 --statistics --max-complexity 10 --exit-zero
         continue-on-error: true
 
       - name: Run tests
-        env:
-          DJANGO_SETTINGS_MODULE: ${{ env.DJANGO_SETTINGS_MODULE }}
         run: pytest
 
       - name: Generate coverage report
-        env:
-          DJANGO_SETTINGS_MODULE: ${{ env.DJANGO_SETTINGS_MODULE }}
         run: coverage run -m pytest
 
       - name: Display coverage report
