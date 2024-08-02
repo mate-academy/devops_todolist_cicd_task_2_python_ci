@@ -1,6 +1,6 @@
 # Django ToDo list
 
-This project is an advanced to-do list web application with the basic features of most web apps, such as accounts/login, API, and interactive UI. 
+This project is an advanced to-do list web application with the basic features of most web apps, such as accounts/login, API, and interactive UI.
 
 To complete this task, you will need:
 
