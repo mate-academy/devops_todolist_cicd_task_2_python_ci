@@ -8,7 +8,9 @@ from django.http import HttpResponse
 from django.utils import timezone
 import time
 
+
 startup_time = timezone.now()
+
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
@@ -60,9 +62,11 @@ class TodoViewSet(viewsets.ModelViewSet):
         creator = user if user.is_authenticated else None
         serializer.save(creator=creator)
 
+
 # Health Check View
 def health(request):
     return HttpResponse("Health OK", content_type="text/plain")
+
 
 # Readiness Check View
 def ready(request):
