@@ -1,0 +1,55 @@
+name: python-deployment
+run-name: ${{ github.actor }} - ${{ github.sha }}
+on:
+    push:
+        branches: ["main", "develop"]
+    pull_request:
+        branches: ["main"]
+env:
+    PYTHON_VERSION: 3.8
+
+jobs:
+    python-ci:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./src
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Python ${{ env.PYTHON_VERSION }}
+              uses: actions/setup-python@v4
+              with:
+                python-version: ${{ env.PYTHON_VERSION }}
+
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install flake8 pytest pytest-cov pytest-django
+                pip install -r requirements.txt
+
+            - name: Lint with flake8
+              run: |
+                cd ../
+                flake8 . --show-source --statistics
+
+            - name: Check Complexity
+              run: |
+                cd ../
+                flake8 . --exit-zero --max-complexity=10 --statistics
+
+            - name: Test with pytest
+              run: |
+                pytest -v --cov-report=term-missing --cov=. --cov-report=json
+
+            - name: Archive Python code
+              run: |
+                cd ..
+                mkdir -p artifacts
+                cp -r src/* artifacts/
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: python-code
+                path: artifacts/
