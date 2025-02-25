@@ -1,0 +1,59 @@
+name: Python CI for GitHub Actions
+
+run-name: ${{ github.actor }} - ${{ github.sha }}
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+env:
+  PYTHON_VERSION: 3.8
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+
+    steps:
+      - name: Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: '${{ env.PYTHON_VERSION }}'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install coverage flake8 pytest
+          pip install -r requirements.txt
+
+      - name: Check Code Style
+        run: |
+          flake8 . --show-source --statistics --exit-zero
+
+      - name: Run Unit Test with pytest
+        run: |
+          python manage.py test -v2
+
+      - name: Check Code Complexity
+        run: |
+          cd ../
+          flake8 . --statistics --max-complexity=10 --exit-zero
+
+      - name: Generate coverage report
+        run: coverage run --source='.' manage.py test -v2
+
+      - name: Coverage report
+        run: coverage report
+
+      - name: Upload Python Code as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-code
+          path: .
