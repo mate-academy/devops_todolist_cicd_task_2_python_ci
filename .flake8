@@ -1,0 +1,2 @@
+[flake8]
+extend-ignore = E501, ANN001, ANN101, ANN201, ANN204, Q000, F401
