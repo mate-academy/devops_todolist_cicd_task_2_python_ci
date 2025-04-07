@@ -20,7 +20,7 @@ jobs:
         working-directory: ./src
 
     env:
-      PYTHON_VERSION: 3.10
+      PYTHON_VERSION: 3.8
 
     steps:
       - name: Setup python ${{ env.PYTHON_VERSION }}
