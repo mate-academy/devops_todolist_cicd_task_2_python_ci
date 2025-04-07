@@ -36,7 +36,7 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          flake8 . --exit-zero --max-complexity=10 --statistics
+          flake8 . --exit-zero --max-complexity=10 --statistics continue-on-error: true
 
       - name: Run tests
         run: coverage run -m pytest
@@ -44,7 +44,7 @@ jobs:
       - name: Generate coverage report
         run: |
           coverage report
-          coverage html  # Optional: generates an HTML report
+          coverage html
 
       - name: Upload coverage HTML report as artifact
         if: always()
@@ -52,3 +52,12 @@ jobs:
         with:
           name: coverage-report
           path: htmlcov
+
+      - name: Upload Python source code as artifact
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-source
+          path: |
+            **/*.py
+            !**/__pycache__/
