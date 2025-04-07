@@ -1,0 +1,64 @@
+name: todolist-deployment
+run-name: ${{ github.actor }} - ${{ github.ref_name }} - ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  PYTHON_VERSION: 3.8
+  DJANGO_SETTINGS_MODULE: todolist.settings
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      name: Setup Python ${{ env.PYTHON_VERSION }}
+      with:
+        python-version: ${{env.PYTHON_VERSION}}
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest pytest-django pytest-cov
+        pip install -r requirements.txt
+
+    - name: Apply Migrations
+      run: |
+        python manage.py migrate --noinput
+
+    - name: Lint
+      run: |
+        cd ../
+        flake8 . --show-source --statistics
+
+    - name: Check Complexity
+      run: |
+        cd ../
+        flake8 . --statistics --max-complexity=10 --exit-zero
+
+    - name: Run Django Tests
+      run: |
+        python manage.py test
+
+    - name: Run unit tests with pytest
+      run: |
+        pytest -v --cov=. --cov-report=term-missing --cov-report=json
+
+    - name: Upload Python code as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-code
+        path: ./src
