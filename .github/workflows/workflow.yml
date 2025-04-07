@@ -49,10 +49,6 @@ jobs:
         cd ../
         flake8 . --statistics --max-complexity=10 --exit-zero
 
-    - name: Run Django Tests
-      run: |
-        python manage.py test
-
     - name: Run unit tests with pytest
       run: |
         pytest -v --cov=. --cov-report=term-missing --cov-report=json
