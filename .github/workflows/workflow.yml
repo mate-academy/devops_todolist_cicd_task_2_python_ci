@@ -36,8 +36,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lint with flake8
+        continue-on-error: true
         run: |
-          flake8 . --exit-zero --max-complexity=10 --statistics continue-on-error: true
+          flake8 . --exit-zero --max-complexity=10 --statistics
 
       - name: Run tests
         run: coverage run -m pytest
