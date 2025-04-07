@@ -48,14 +48,14 @@ jobs:
 
       - name: Upload coverage HTML report as artifact
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: htmlcov
 
       - name: Upload Python source code as artifact
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: python-source
           path: |
