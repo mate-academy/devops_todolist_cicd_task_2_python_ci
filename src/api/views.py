@@ -10,6 +10,7 @@ import time
 
 startup_time = timezone.now()
 
+
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
     Object-level permission to only allow owners of an object to edit it.
@@ -61,10 +62,14 @@ class TodoViewSet(viewsets.ModelViewSet):
         serializer.save(creator=creator)
 
 # Health Check View
+
+
 def health(request):
     return HttpResponse("Health OK", content_type="text/plain")
 
 # Readiness Check View
+
+
 def ready(request):
     # Calculate elapsed time since startup
     elapsed_time = timezone.now() - startup_time

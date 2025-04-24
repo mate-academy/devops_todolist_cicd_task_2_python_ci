@@ -50,7 +50,8 @@ class RegistrationForm(forms.Form):
 
     password_confirmation = forms.CharField(
         **form_kwargs(
-            widget=forms.PasswordInput(attrs=widget_attrs("Password confirmation"))
+            widget=forms.PasswordInput(
+                attrs=widget_attrs("Password confirmation"))
         )
     )
 

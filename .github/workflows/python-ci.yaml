@@ -1,0 +1,50 @@
+name: python CI
+run-name: ${{ github.actor }} - ${{ github.ref_name }} - ${{ github.sha }}
+
+on:
+  pull_request:
+    branches: ["main", "develop"]
+  push:
+    branches: ["main"]
+env:
+  PYTHON_VERSION: "3.8"
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        name: Setting up python ${{ env.PYTHON_VERSION }}
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest pytest-django pytest-cov coverage
+          pip install -r requirements.txt
+
+      - name: Run unit tests with coverage
+        run: |
+          python manage.py test -v2
+          coverage run --source='.' manage.py test -v2
+          coverage report -m
+
+      - name: Lint (non-blocking)
+        run: |
+          flake8 . --show-source --statistics || true
+
+      - name: Check Complexity (non-blocking)
+        run: |
+          flake8 . --statistics --max-complexity=10 || true
+
+
+      - name: Upload Python code as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-code
+          path: ./src
