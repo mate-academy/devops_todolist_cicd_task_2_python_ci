@@ -1,0 +1,64 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  PYTHON_VERSION: "3.10"
+
+defaults:
+  run:
+    working-directory: ./src
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show GitHub Actor
+        run: |
+          echo "Triggered by actor and sha: ${{ github.actor }} - ${{ github.sha }}"
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage flake8
+
+      - name: Run tests
+        run: |
+          coverage run manage.py test
+
+      - name: Show coverage report
+        run: |
+          coverage report
+
+      - name: Run flake8 (style check)
+        run: |
+          flake8 .
+        continue-on-error: true
+
+      - name: Run flake8 (complexity check)
+        run: |
+          flake8 . --max-complexity=10
+        continue-on-error: true
+
+      - name: Upload Python code as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-code
+          path: "**/*.py"
