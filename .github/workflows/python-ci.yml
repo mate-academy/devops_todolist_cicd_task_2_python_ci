@@ -1,0 +1,65 @@
+name: "Python CI"
+run-name: "CI by ${{ github.actor }} @ ${{ github.sha }}"
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PY_VERSION: "3.11"
+
+# Усі команди `run:` виконуватимуться в папці src/
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PY_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PY_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage flake8
+
+      # 1) Тести з coverage (Django)
+      - name: Run tests with coverage (Django)
+        run: |
+          coverage run manage.py test
+          coverage xml -o coverage.xml
+
+      # 2–3) Показати coverage в консолі
+      - name: Show coverage report
+        run: coverage report -m
+
+      # 4) Перевірка стилю — НЕ блокує
+      - name: Flake8 style check (non-blocking)
+        run: flake8 .
+        continue-on-error: true
+
+      # 5) Перевірка складності — НЕ блокує
+      - name: Code complexity check (non-blocking)
+        run: flake8 . --select=C901 --max-complexity=12
+        continue-on-error: true
+
+      # 6) Завантажуємо артефакти (код + coverage.xml)
+      - name: Upload artifact (source + coverage)
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-source-${{ github.sha }}
+          path: |
+            src/**/*.py
+            src/coverage.xml
