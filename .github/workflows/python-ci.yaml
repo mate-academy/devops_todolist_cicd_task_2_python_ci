@@ -1,0 +1,58 @@
+name: Python CI
+
+run-name: CI run by ${{ github.actor }} for commit ${{ github.sha }}
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PYTHON_VERSION: '3.12'
+
+defaults:
+  run:
+    working-directory: ./src
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 pytest pytest-cov pytest-django
+
+      - name: Run tests
+        run: |
+          pytest -v
+
+      - name: Run tests
+        run: |
+          pytest --cov-report=term-missing --cov=. --cov-report=json
+
+      - name: Check code style (flake8)
+        run: |
+          flake8 . --show-source --statistics --exit-zero
+        continue-on-error: true
+
+      - name: Check code complexity (flake8)
+        run: |
+          flake8 . --max-complexity=10 --statistics --exit-zero
+
+      - name: Upload Python code as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-source
+          path: .

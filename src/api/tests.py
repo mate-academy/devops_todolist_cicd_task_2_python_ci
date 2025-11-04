@@ -110,7 +110,9 @@ class TodoListTests(APITestCase):
         # delete todolist
         todolist_id = post_response.data["id"]
         delete_response = self.client.delete(f"/api/todolists/{todolist_id}/")
-        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(
+            delete_response.status_code, status.HTTP_204_NO_CONTENT
+        )
         # get todolist and expect 404
         get_response = self.client.get(f"/api/todolists/{todolist_id}/")
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
@@ -118,9 +120,13 @@ class TodoListTests(APITestCase):
 
 class TodoTests(APITestCase):
     def setUp(self):
-        self.test_user = User.objects.create_user("test", "test@example.com", "test")
+        self.test_user = User.objects.create_user(
+            "test", "test@example.com", "test"
+        )
         self.client.login(username="test", password="test")
-        self.test_todolist = TodoList(title="some title", creator=self.test_user)
+        self.test_todolist = TodoList(
+            title="some title", creator=self.test_user
+        )
         self.test_todolist.save()
         self.test_data = {
             "description": "some description",
@@ -139,7 +145,10 @@ class TodoTests(APITestCase):
     def test_create_todo(self):
         response = self.post_new_todo(self.test_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["description"], self.test_data["description"])
+        self.assertEqual(
+            response.data["description"],
+            self.test_data["description"]
+        )
 
     def test_get_todo(self):
         # add todo
@@ -188,7 +197,10 @@ class TodoTests(APITestCase):
         self.assertEqual(put_response.status_code, status.HTTP_200_OK)
         get_response = self.client.get(f"/api/todos/{todo_id}/")
         self.assertEqual(put_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(get_response.data["description"], "changed description")
+        self.assertEqual(
+            get_response.data["description"],
+            "changed description"
+        )
 
     def test_put_todo_changing_status(self):
         # add todo
@@ -213,7 +225,10 @@ class TodoTests(APITestCase):
         # delete todolist
         todo_id = post_response.data["id"]
         delete_response = self.client.delete(f"/api/todos/{todo_id}/")
-        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(
+            delete_response.status_code,
+            status.HTTP_204_NO_CONTENT
+        )
         # get todolist and expect 404
         get_response = self.client.get(f"/api/todos/{todo_id}/")
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
