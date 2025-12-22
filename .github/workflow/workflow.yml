@@ -43,16 +43,14 @@ jobs:
       - name: Lint
         continue-on-error: true
         run: |
-          cd ../
           flake8 . --show-source --statistics
 
 
       - name: Check complexity
         run: |
-          cd ../
           flake8 . --statistics --max-complexity=10 --exit-zero
 
       - uses: actions/upload-artifact
         with:
-          name: coverage-report
-          path: coverage-report.json
+          name: python-artifact
+          path: ./
