@@ -1,0 +1,56 @@
+name: Python workflow
+run-name: CI by ${{ github.actor }} on commit ${{ steps.vars.outputs.sha_short }}
+
+env:
+  PYTHON_VERSION: 3.8
+
+on:
+  push:
+  - main
+  - develop
+  pull-request:
+  - main
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v6
+        name: Install Python
+        with:
+          python-version: '${{ env.PYTHON_VERSION }}'
+
+      - name: install_requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest pytest-cov
+          pip install -r requirements.txt
+
+      - name: Run Test
+        run: pytest -v
+
+
+      - name: Coverage of tests
+        run: pytest --cov-report=term-missing --cov-report=json
+
+      - name: Coverage Report
+        run: pytest --cov-report=json
+
+      - name: Lint
+        run: |
+          cd ../
+          flake8 . --show-source --statistics
+
+      - name: Check complexity
+        run: |
+          cd ../
+          flake8 . --statistics --max-complexity=10 --exit-zero
+
+      - uses: hynek/build-and-inspect-python-package@v2
