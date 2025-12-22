@@ -15,9 +15,6 @@ jobs:
   python-ci:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./src
     steps:
 
       - uses: actions/checkout@v4
@@ -44,9 +41,11 @@ jobs:
         run: pytest --cov-report=json
 
       - name: Lint
+        continue-on-error: true
         run: |
           cd ../
-          flake8 . --show-source --statistics continue-on-error=true
+          flake8 . --show-source --statistics
+
 
       - name: Check complexity
         run: |
@@ -54,3 +53,6 @@ jobs:
           flake8 . --statistics --max-complexity=10 --exit-zero
 
       - uses: actions/upload-artifact
+        with:
+          name: coverage-report
+          path: coverage-report.json
