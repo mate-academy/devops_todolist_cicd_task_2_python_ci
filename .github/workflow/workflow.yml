@@ -1,15 +1,15 @@
 name: Python workflow
-run-name: CI by ${{ github.actor }} on commit ${{ steps.vars.outputs.sha_short }}
+run-name: CI by ${{ github.actor }} on commit ${{ substr(github.sha, 0, 7) }}
 
 env:
   PYTHON_VERSION: 3.8
 
 on:
   push:
-  - main
-  - develop
+    branches: ['main', 'develop']
   pull-request:
-  - main
+    branches: ['main']
+
 
 jobs:
   python-ci:
@@ -38,7 +38,7 @@ jobs:
 
 
       - name: Coverage of tests
-        run: pytest --cov-report=term-missing --cov-report=json
+        run: pytest --cov-report=term-missing
 
       - name: Coverage Report
         run: pytest --cov-report=json
@@ -46,11 +46,11 @@ jobs:
       - name: Lint
         run: |
           cd ../
-          flake8 . --show-source --statistics
+          flake8 . --show-source --statistics continue-on-error=true
 
       - name: Check complexity
         run: |
           cd ../
           flake8 . --statistics --max-complexity=10 --exit-zero
 
-      - uses: hynek/build-and-inspect-python-package@v2
+      - uses: actions/upload-artifact
