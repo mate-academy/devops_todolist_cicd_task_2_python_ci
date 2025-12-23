@@ -1,0 +1,77 @@
+name: Python CI
+
+run-name: ${{ github.actor }} | ${{ github.sha }}
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  python-ci:
+    name: python-ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        working-directory: src
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage
+
+      - name: Run tests
+        working-directory: src
+        run: |
+          python manage.py test
+
+      - name: Generate coverage
+        working-directory: src
+        run: |
+          coverage run manage.py test
+
+      - name: Show coverage report in console
+        working-directory: src
+        run: |
+          coverage report -m
+
+      - name: Build HTML coverage report
+        working-directory: src
+        run: |
+          coverage html -d ../htmlcov
+
+      - name: Flake8 style check (non-blocking)
+        working-directory: src
+        continue-on-error: true
+        run: |
+          flake8 .
+
+      - name: Flake8 complexity check (non-blocking)
+        working-directory: src
+        continue-on-error: true
+        run: |
+          flake8 . --max-complexity=10
+
+      - name: Upload source code artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-code
+          path: src
+
+      - name: Upload coverage HTML artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: htmlcov
