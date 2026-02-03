@@ -10,6 +10,7 @@ from lists.models import Todo, TodoList
 
 class ListTests(TestCase):
     def setUp(self):
+        print("Test")
         self.user = User.objects.create_user("test", "test@example.com", "test")
         self.todolist = TodoList(title="test title", creator=self.user)
         self.todolist.save()
