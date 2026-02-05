@@ -1,0 +1,48 @@
+name: python-workflow
+run-name: ${{ github.actor }} - ${{ github.sha }}
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  PYTHON_VERSION: 3.12
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+
+      - name: Setup Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        working-directory: ./src
+        run: pip install -r requirements.txt
+
+      - name: Run tests and coverage
+        working-directory: ./src
+        run: pytest -v --cov=. --cov-report=term-missing
+
+      - name: Check code style
+        working-directory: ./src
+        run: flake8 . --show-source --statistics --exit-zero
+
+      - name: Check code complexity
+        working-directory: ./src
+        run: flake8 . --statistics --max-complexity=10 --exit-zero
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v6.0.0
+        with:
+          name: python-code
+          path: .
