@@ -37,11 +37,10 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Runing tests and coverage report
-        working-directory: ./src/
-        run: |
-          coverage run -m pytest -v
-          coverage report -m
+        run: coverage run manage.py test
 
+      - name: Display Coverage Report
+        run: coverage report
 
       - name: Lint
         working-directory: ./src/
@@ -57,4 +56,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-source
-          path: .
+          path: "**/*.py"
