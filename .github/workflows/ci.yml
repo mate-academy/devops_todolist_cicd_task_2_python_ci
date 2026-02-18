@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 env:
-  PYTHON_VERSION : 3.8
+  PYTHON_VERSION: 3.8
 
 jobs:
   python-ci:
@@ -30,16 +30,18 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest pytest-cov pytest-django
+          pip install flake8 pytest pytest-django coverage
 
       - name: Install requirements
         working-directory: ./src/
         run: pip install -r requirements.txt
 
-      - name: Coverage report
+      - name: Runing tests and coverage report
         working-directory: ./src/
         run: |
-          pytest -v --cov=. --cov-report=term-missing
+          coverage run -m pytest -v
+          coverage report -m
+
 
       - name: Lint
         working-directory: ./src/
