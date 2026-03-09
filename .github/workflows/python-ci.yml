@@ -1,0 +1,62 @@
+name: Python CI
+
+run-name: Python CI by @${{ github.actor }} for ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r src/requirements.txt
+          pip install coverage flake8
+
+      - name: Run tests
+        working-directory: src
+        run: python manage.py test
+
+      - name: Generate coverage report
+        working-directory: src
+        run: coverage run --source='.' manage.py test
+
+      - name: Display coverage in console
+        working-directory: src
+        run: coverage report -m
+
+      - name: Check code style (flake8)
+        continue-on-error: true
+        run: flake8 src --max-line-length=120
+
+      - name: Check code complexity (flake8)
+        continue-on-error: true
+        run: flake8 src --max-complexity=10 --select=C901
+
+      - name: Upload Python source as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-source
+          path: |
+            src/**/*.py
+            src/manage.py
