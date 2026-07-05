@@ -11,7 +11,7 @@ on:
 jobs:
   python-ci:
     env:
-      PythonVersion: 3.14
+      PythonVersion: 3.10
     
     runs-on: ubuntu-latest
 
@@ -36,11 +36,9 @@ jobs:
 
       - name: Test application
         run: python manage.py test
-        continue-on-error: true
         
       - name: Generate coverage report
         run: coverage run manage.py test
-        continue-on-error: true
         
       - name: Coverage report
         run: coverage report
@@ -57,5 +55,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-code
+          path: .
       
       
