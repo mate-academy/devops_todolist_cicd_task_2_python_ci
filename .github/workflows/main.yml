@@ -39,7 +39,7 @@ jobs:
         continue-on-error: true
         
       - name: Generate coverage report
-        run: coverage manage.py test
+        run: coverage run manage.py test
         
       - name: Coverage report
         run: coverage report
