@@ -33,3 +33,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 coverage
           pip install -r requirements.txt
+
+      - name: Test application
+        run: python manage.py test
+
+      - name: Generate coverage report
+        run: coverage manage.py test
+
+      - name: Coverage report
+        run: coverage report
+
+      - name: Check code style with flake8
+        run: flake8 --statistics
+
+      - name: Check complexity of the code
+        run: flake8 --max-complexity 10 --statistics
+
+      - name: Upload python code as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-code
+      
+      
