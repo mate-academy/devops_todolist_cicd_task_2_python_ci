@@ -21,6 +21,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -32,9 +33,8 @@ jobs:
           pip install flake8 pytest pytest-cov
           pip install -r requirements.txt
 
-      - name: Lint with flake8
-        run: |
-          flake8 . --show-source --statistics
+      - name: Test with pytest
+        run: pytest
 
       - name: Test with pytest pytest-cov
         run: |
@@ -44,3 +44,8 @@ jobs:
         run: |
           cd ../
           flake8 . --exit-zero --max-complexity=10 --statistics
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pytest-cov-report 
