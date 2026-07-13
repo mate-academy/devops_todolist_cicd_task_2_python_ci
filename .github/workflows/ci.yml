@@ -36,7 +36,6 @@ jobs:
     - name: Run tests
       run: |
        python manage.py test
-
     - name: Generate coverage report
       run: |
         coverage run manage.py test
