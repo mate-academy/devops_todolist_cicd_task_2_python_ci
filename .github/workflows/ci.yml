@@ -1,0 +1,55 @@
+name: "CI for task 2"
+
+run-name: "Started by ${{ github.actor }} commit's hash ${{ github.sha }}"
+
+env:
+  PYTHON_VERSION: "3.8"
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r src/requirements.txt
+          pip install flake8 coverage
+
+      - name: Run tests
+        run: python manage.py test -v 2
+        working-directory: src
+
+      - name: Run coverage
+        run: coverage run manage.py test
+        working-directory: src
+
+      - name: Coverage report
+        run: coverage report
+        working-directory: src
+
+      - name: Linter
+        run: flake8 .
+        working-directory: src
+        continue-on-error: true
+
+      - name: Lint (complexity check)
+        run: flake8 . --max-complexity=10
+        working-directory: src
+        continue-on-error: true
+
+      - name: Upload code artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-code
+          path: src
