@@ -31,12 +31,6 @@ jobs:
           pip install flake8 coverage
           pip install -r requirements.txt
 
-      - name: Lint with flake8
-        run: flake8 . --exit-zero --show-source --statistics
-
-      - name: Check complexity
-        run: flake8 . --exit-zero --max-complexity=10 --statistics
-
       - name: Run unit tests
         run: python manage.py test
 
@@ -45,6 +39,12 @@ jobs:
 
       - name: Display coverage report in console
         run: coverage report
+
+      - name: Lint with flake8
+        run: flake8 . --exit-zero --show-source --statistics
+
+      - name: Check complexity
+        run: flake8 . --exit-zero --max-complexity=10 --statistics
 
       - name: Upload Python code as artifact
         uses: actions/upload-artifact@v4
