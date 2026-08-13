@@ -1,0 +1,51 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  PYTHON_VERSION: '3.11'
+
+run-name: 'CI ${{ github.actor }} - ${{ github.sha }}'
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -q coverage flake8 pytest
+          [ -f requirements.txt ] && pip install -q -r requirements.txt
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Generate coverage
+        run: coverage run -m pytest -q && coverage report
+
+      - name: Check code style
+        continue-on-error: true
+        run: flake8 . -q
+
+      - name: Check code complexity
+        continue-on-error: true
+        run: flake8 . --max-complexity=10 -q
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: python-code-${{ github.sha }}
+          path: .
+          retention-days: 30
