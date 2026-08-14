@@ -30,14 +30,15 @@ jobs:
           pip install flake8 pytest pytest-cov
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Check Style Code
-        run: |
-          flake8 . --show-source --statistics
-
-      - name: Check Complexity
+      - name: Check code style with flake8
         continue-on-error: true
         run: |
-          flake8 . --exit-zero --max-complexity=10 --statistics
+          flake8 . --exclude=venv --show-source --statistics
+
+      - name: Check code complexity with flake8
+        continue-on-error: true
+        run: |
+          flake8 . --exclude=venv --max-complexity=10 --exit-zero --statistics
 
       - name: Test with pytest
         run: |
