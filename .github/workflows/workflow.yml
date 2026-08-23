@@ -1,4 +1,4 @@
-name: Test todoapp workflow before push and pull requests
+name: TodoApp CI
 run-name: Run by ${{ github.actor }} (${{ github.sha }})
 on:
   push:
@@ -27,19 +27,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install coverage flake8
+        working-directory: src
 
       - name: Run tests
-        run: coverage run -m pytest
+        run: coverage run manage.py test
+        working-directory: src
 
       - name: Generate coverage report
         run: coverage report
+        working-directory: src
 
       - name: Check code style
         run: flake8 .
+        working-directory: src
         continue-on-error: true
 
       - name: Check code complexity
         run: flake8 . --max-complexity=10
+        working-directory: src
         continue-on-error: true
 
       - name: Upload code artifact
