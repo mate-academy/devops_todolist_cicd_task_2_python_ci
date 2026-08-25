@@ -1,0 +1,55 @@
+name: python-deployment
+run-name: ${{ github.actor }}-${{ github.ref_name }}-${{ github.sha }}
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+
+  python-ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./src
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 coverage
+          pip install -r requirements.txt
+
+      - name: Run tests with coverage
+        run: coverage run manage.py test
+
+      - name: Generate coverage report
+        run: coverage report
+
+      - name: Lint with flake8
+        run: flake8 .
+        continue-on-error: true
+
+      - name: Check complexity
+        run: flake8 --max-complexity 10 .
+        continue-on-error: true
+
+      - name: Uploade code artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-code
+          path: .
