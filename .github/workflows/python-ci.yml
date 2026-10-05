@@ -1,0 +1,50 @@
+name: Python CI
+run-name: Python CI by @${{ github.actor }} for commit ${{ github.sha }}
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.10"
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt coverage flake8
+
+      - name: Run tests
+        run: python manage.py test
+
+      - name: Generate coverage
+        run: coverage run manage.py test
+
+      - name: Display coverage report
+        run: coverage report
+
+      - name: Check code style
+        run: flake8 . --exclude migrations
+        continue-on-error: true
+
+      - name: Check code complexity
+        run: flake8 . --exclude migrations --select C901 --max-complexity 10
+        continue-on-error: true
+
+      - name: Upload Python code
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-code
+          path: src
